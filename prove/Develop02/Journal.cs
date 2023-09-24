@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Formats.Asn1;
 using System.IO;
 using System.Runtime.CompilerServices;
 
 public class Journal
 {
     private List<Entry> entries = new List<Entry>();
-    private void AddEntry(string prompt, string response)
+    public void AddEntry(string prompt, string response)
     {
         entries.Add(new Entry(prompt, response));
     }

@@ -10,7 +10,7 @@ class Program
 
         while (true)
         {
-            string choice = Menu.Choice();
+            string choice = Menu.UserChoice();
 
             switch (choice)
             {
@@ -19,7 +19,7 @@ class Program
                     Console.WriteLine($"Prompt: {randomPrompt}");
                     Console.Write("Response: ");
                     string response = Console.ReadLine();
-                    Journal.AddEntry(randomPrompt, response);
+                    journal.AddEntry(randomPrompt, response);
                     break;
 
                 case "2":
