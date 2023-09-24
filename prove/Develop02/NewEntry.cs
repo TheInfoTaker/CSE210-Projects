@@ -1,10 +1,10 @@
 using System;
 
-class Entry
+public class Entry
 {
-    public string Prompt;
-    public string Response;
-    public DateTime Date; 
+    public string Prompt { get; set; }
+    public string Response { get; set; }
+    public DateTime Date { get; set; } 
 
     public Entry(string prompt, string response)
     {

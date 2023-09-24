@@ -1,6 +1,6 @@
 using System;
 
-class Menue
+class Menu
 {
     public void Display()
     {
