@@ -1,0 +1,80 @@
+Notes:
+
+Goals.txt:
+SimpleGoal:Give a talk,Speak in Sacrament Meeting, 100, false
+EternalGoal:Study the scriptures, study for 10min,50
+ChecklistGoal:Attend the temple,perform 3 ordinances,50,500,3,0
+
+    // This line is stored in a textfile and accessed by the program. The last item in the list is a true or false statement that determines whether or not an X appears in the checkbox in the program.
+    SimpleGoal:Give a talk,Speak in Sacrament Meeting, 100, false
+    // This line is derived from the line above and displayed. 
+    1. [ ] "GoalName" ("DescriptionOfGoal") Points: 100
+
+
+
+
+You have 0 points.
+
+Menu Options:
+    1. Create New Goal
+    2. List Goals
+    3. Save Goals
+    4. Load Goals
+    5. Record Event
+    6. Quit
+
+    Select a choice from the menu:
+
+\/\/\/\/\/\/\/\/
+You have 0 points. {POINT VARIABLE}
+
+Menu Options:
+    1. Create New Goal
+        The types of Goals are:
+            1. Simple Goal //Can be checked off
+                What is the name of your goal? //CONNECTION 1{
+                
+                What is a short description of if?
+
+                What is the number of points associated with the goal? }
+
+            2. Eternal Goal //Doesn't get checked
+                What is the name of your goal? //CONNECTION 1{
+                
+                What is a short description of if?
+
+                What is the number of points associated with the goal? }
+
+
+            3. Checklist Goal
+
+                What is the name of your goal? //CONNECTION 1{
+
+                What is a short description of if?
+
+                What is the number of points associated with the goal? }
+
+                How many times does this need to be accomplished for a bonus? //POLYMORPHISM{
+
+                What is the bonus for accomplishing it that many times? }
+
+        Which type of goal would you like to create?
+
+
+    2. List Goals
+        The Goals are:
+        1. [ ] _Goal_ (_Description_)
+        2. [X] _Goal_ (_Description_) 0/5
+
+    3. Save Goals
+        What is the filename for the goal file? (goals.txt)
+
+    4. Load Goals
+        What is the filename for the goal file? (goals.txt)
+    5. Record Event
+        Your goals are:
+        1. (-)
+        2. (-)
+        Which goal did you accomplish? 2
+            Congradulations! You earned (-) points!
+    6. Quit

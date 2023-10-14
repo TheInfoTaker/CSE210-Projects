@@ -1,0 +1,173 @@
+import java.util.ArrayList;
+import java.util.List;
+
+class Goal {
+    private String _shortName;
+    private String _description;
+    private int _points;
+
+    public Goal(String shortName, String description, int points) {
+        _shortName = shortName;
+        _description = description;
+        _points = points;
+    }
+
+    public String getShortName() {
+        return _shortName;
+    }
+
+    public String getDescription() {
+        return _description;
+    }
+
+    public int getPoints() {
+        return _points;
+    }
+
+    public void recordEvent() {
+        // Abstract method, to be overridden in derived classes
+    }
+
+    public boolean isComplete() {
+        // Abstract method, to be overridden in derived classes
+        return false;
+    }
+
+    public String getDetailsString() {
+        return String.format("[%s] %s: %s", isComplete() ? "X" : " ", _shortName, _description);
+    }
+
+    public String getStringRepresentation() {
+        // Abstract method, to be overridden in derived classes
+        return "";
+    }
+}
+
+class SimpleGoal extends Goal {
+    private boolean _isComplete;
+
+    public SimpleGoal(String shortName, String description, int points) {
+        super(shortName, description, points);
+        _isComplete = false;
+    }
+
+    @Override
+    public void recordEvent() {
+        _isComplete = true;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return _isComplete;
+    }
+
+    @Override
+    public String getStringRepresentation() {
+        return String.format("Simple|%s|%s|%d|%b", getShortName(), getDescription(), getPoints(), _isComplete);
+    }
+}
+
+class EternalGoal extends Goal {
+    public EternalGoal(String shortName, String description, int points) {
+        super(shortName, description, points);
+    }
+
+    @Override
+    public void recordEvent() {
+        // Award points, but no completion
+    }
+
+    @Override
+    public String getStringRepresentation() {
+        return String.format("Eternal|%s|%s|%d", getShortName(), getDescription(), getPoints());
+    }
+}
+
+class ChecklistGoal extends Goal {
+    private int _amountCompleted;
+    private int _target;
+    private int _bonus;
+
+    public ChecklistGoal(String shortName, String description, int points, int target, int bonus) {
+        super(shortName, description, points);
+        _amountCompleted = 0;
+        _target = target;
+        _bonus = bonus;
+    }
+
+    @Override
+    public void recordEvent() {
+        _amountCompleted++;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return _amountCompleted >= _target;
+    }
+
+    @Override
+    public String getDetailsString() {
+        return String.format("[%s] %s: %s (Completed %d/%d times)", isComplete() ? "X" : " ", getShortName(), _description, _amountCompleted, _target);
+    }
+
+    @Override
+    public String getStringRepresentation() {
+        return String.format("Checklist|%s|%s|%d|%d|%d|%d", getShortName(), getDescription(), getPoints(), _target, _bonus, _amountCompleted);
+    }
+}
+
+class GoalManager {
+    private List<Goal> _goals = new ArrayList<>();
+    private int _score = 0;
+
+    public void createGoal(Goal goal) {
+        _goals.add(goal);
+    }
+
+    public void recordEvent(int goalIndex) {
+        if (goalIndex >= 0 && goalIndex < _goals.size()) {
+            Goal goal = _goals.get(goalIndex);
+            goal.recordEvent();
+            _score += goal.getPoints();
+            System.out.println("Event recorded. You earned " + goal.getPoints() + " points.");
+        } else {
+            System.out.println("Invalid goal index.");
+        }
+    }
+
+    public void listGoalDetails() {
+        for (int i = 0; i < _goals.size(); i++) {
+            Goal goal = _goals.get(i);
+            System.out.println("Goal " + i + ": " + goal.getDetailsString());
+        }
+    }
+
+    public void displayPlayerInfo() {
+        System.out.println("Your current score: " + _score);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        GoalManager manager = new GoalManager();
+
+        SimpleGoal simpleGoal = new SimpleGoal("Exercise", "Go for a run", 100);
+        EternalGoal eternalGoal = new EternalGoal("Read", "Read a book", 50);
+        ChecklistGoal checklistGoal = new ChecklistGoal("Gym", "Go to the gym", 20, 5, 200);
+
+        manager.createGoal(simpleGoal);
+        manager.createGoal(eternalGoal);
+        manager.createGoal(checklistGoal);
+
+        manager.displayPlayerInfo();
+        manager.listGoalDetails();
+
+        manager.recordEvent(0);
+        manager.recordEvent(2);
+        manager.recordEvent(1);
+        manager.recordEvent(2);
+
+        manager.displayPlayerInfo();
+        manager.listGoalDetails();
+    }
+}
