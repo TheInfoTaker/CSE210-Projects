@@ -1,126 +1,145 @@
 using System;
 using System.Collections.Generic;
 
-class Address
+class Activity
 {
-    private string StreetAddress { get; set; }
-    private string City { get; set; }
-    private string StateProvince { get; set; }
-    private string Country { get; set; }
+    private DateTime Date { get; set; }
+    protected int Minutes { get; set; }
 
-    public Address(string streetAddress, string city, string stateProvince, string country)
+    public Activity(DateTime date, int minutes)
     {
-        StreetAddress = streetAddress;
-        City = city;
-        StateProvince = stateProvince;
-        Country = country;
+        Date = date;
+        Minutes = minutes;
     }
 
-    public bool IsInUSA()
+    public virtual double GetDistance()
     {
-        return Country == "USA";
+        return 0; // Base class does not have distance information
     }
 
-    public string GetAddressString()
+    public virtual double GetSpeed()
     {
-        return $"{StreetAddress}\n{City}, {StateProvince}\n{Country}";
+        return 0; // Base class does not have speed information
+    }
+
+    public virtual double GetPace()
+    {
+        return 0; // Base class does not have pace information
+    }
+
+    public virtual string GetSummary()
+    {
+        return $"{Date:dd MMM yyyy}: {GetActivityType()} ({Minutes} min)";
+    }
+
+    public virtual string GetActivityType()
+    {
+        return "Activity";
     }
 }
 
-class Customer
+class Running : Activity
 {
-    private string Name { get; set; }
-    private Address Address { get; set; }
+    private double Distance { get; set; }
 
-    public Customer(string name, Address address)
+    public Running(DateTime date, int minutes, double distance) : base(date, minutes)
     {
-        Name = name;
-        Address = address;
+        Distance = distance;
     }
 
-    public bool IsInUSA()
+    public override double GetDistance()
     {
-        return Address.IsInUSA();
+        return Distance;
     }
 
-    public string GetCustomerInfo()
+    public override double GetSpeed()
     {
-        return $"Customer Name: {Name}\nAddress:\n{Address.GetAddressString()}";
+        return Distance / (Minutes / 60.0);
+    }
+
+    public override double GetPace()
+    {
+        return Minutes / Distance;
+    }
+
+    public override string GetSummary()
+    {
+        return $"{base.GetSummary()}: Distance {Distance:F1} miles, Speed {GetSpeed():F1} mph, Pace: {GetPace():F1} min per mile";
+    }
+
+    public override string GetActivityType()
+    {
+        return "Running";
     }
 }
 
-class Product
+class StationaryBicycle : Activity
 {
-    public string Name { get; set; }
-    public int ProductId { get; set; }
-    private decimal Price { get; set; }
-    private int Quantity { get; set; }
+    private double Speed { get; set; }
 
-    public Product(string name, int productId, decimal price, int quantity)
+    public StationaryBicycle(DateTime date, int minutes, double speed) : base(date, minutes)
     {
-        Name = name;
-        ProductId = productId;
-        Price = price;
-        Quantity = quantity;
+        Speed = speed;
     }
 
-    public decimal CalculateProductTotalPrice()
+    public override double GetSpeed()
     {
-        return Price * Quantity;
+        return Speed;
+    }
+
+    public override double GetDistance()
+    {
+        return (Speed * Minutes) / 60.0;
+    }
+
+    public override double GetPace()
+    {
+        return 60.0 / Speed;
+    }
+
+    public override string GetSummary()
+    {
+        return $"{base.GetSummary()}: Speed {Speed:F1} kph, Distance {GetDistance():F1} km, Pace: {GetPace():F1} min per km";
+    }
+
+    public override string GetActivityType()
+    {
+        return "Stationary Bicycle";
     }
 }
 
-class Order
+class Swimming : Activity
 {
-    private List<Product> Products { get; set; }
-    private Customer Customer { get; set; }
+    private int Laps { get; set; }
 
-    public Order(Customer customer)
+    public Swimming(DateTime date, int minutes, int laps) : base(date, minutes)
     {
-        Products = new List<Product>();
-        Customer = customer;
+        Laps = laps;
     }
 
-    public void AddProduct(Product product)
+    public override double GetDistance()
     {
-        Products.Add(product);
+        return (Laps * 50) / 1000.0; // Convert 50m laps to kilometers
     }
 
-    public decimal CalculateTotalPrice()
+    public override double GetSpeed()
     {
-        decimal totalPrice = 0;
-        foreach (var product in Products)
-        {
-            totalPrice += product.CalculateProductTotalPrice();
-        }
-
-        if (Customer.IsInUSA())
-        {
-            totalPrice += 5; // Shipping cost for USA
-        }
-        else
-        {
-            totalPrice += 35; // Shipping cost for non-USA
-        }
-
-        return totalPrice;
+        return GetDistance() / (Minutes / 60.0);
     }
 
-    public string GetPackingLabel()
+    public override double GetPace()
     {
-        string packingLabel = "Packing Label:\n";
-        foreach (var product in Products)
-        {
-            packingLabel += $"{product.Name} (Product ID: {product.ProductId})\n";
-        }
-        return packingLabel;
+        return Minutes / GetDistance();
     }
 
-    public string GetShippingLabel()
+    public override string GetSummary()
     {
-        string shippingLabel = "Shipping Label:\n";
-        shippingLabel += Customer.GetCustomerInfo();
-        return shippingLabel;
+        return $"{base.GetSummary()}: Distance {GetDistance():F1} km, Speed {GetSpeed():F1} kph, Pace: {GetPace():F1} min per km";
+    }
+
+    public override string GetActivityType()
+    {
+        return "Swimming";
     }
 }
 
@@ -128,43 +147,21 @@ class Program
 {
     static void Main(string[] args)
     {
-        // Create an address
-        Address customerAddress = new Address("123 Main St", "Anytown", "CA", "USA");
+        List<Activity> activities = new List<Activity>();
 
-        // Create a customer
-        Customer customer = new Customer("John Doe", customerAddress);
+        // Create activities of each type
+        Activity runningActivity = new Running(DateTime.Now, 30, 3.0);
+        Activity bicycleActivity = new StationaryBicycle(DateTime.Now, 45, 20.0);
+        Activity swimmingActivity = new Swimming(DateTime.Now, 60, 40);
 
-        // Create products
-        Product product1 = new Product("Widget", 1, 10.99M, 2);
-        Product product2 = new Product("Gadget", 2, 15.50M, 1);
-        
-        // Create an order for the first customer
-        Order order1 = new Order(customer);
-        order1.AddProduct(product1);
-        order1.AddProduct(product2);
+        activities.Add(runningActivity);
+        activities.Add(bicycleActivity);
+        activities.Add(swimmingActivity);
 
-        // Create an address for a non-USA customer
-        Address nonUsaAddress = new Address("456 Elm St", "Othercity", "Ontario", "Canada");
-
-        // Create a non-USA customer
-        Customer nonUsaCustomer = new Customer("Jane Smith", nonUsaAddress);
-
-        // Create more products
-        Product product3 = new Product("Thingamajig", 3, 8.99M, 3);
-
-        // Create an order for the non-USA customer
-        Order order2 = new Order(nonUsaCustomer);
-        order2.AddProduct(product3);
-
-        // Calculate and display order details
-        Console.WriteLine("Order 1:");
-        Console.WriteLine(order1.GetPackingLabel());
-        Console.WriteLine(order1.GetShippingLabel());
-        Console.WriteLine($"Total Price: ${order1.CalculateTotalPrice():F2}\n");
-
-        Console.WriteLine("Order 2:");
-        Console.WriteLine(order2.GetPackingLabel());
-        Console.WriteLine(order2.GetShippingLabel());
-        Console.WriteLine($"Total Price: ${order2.CalculateTotalPrice():F2}");
+        // Display summary for each activity
+        foreach (var activity in activities)
+        {
+            Console.WriteLine(activity.GetSummary());
+        }
     }
 }

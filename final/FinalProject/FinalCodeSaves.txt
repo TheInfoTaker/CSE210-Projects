@@ -1,0 +1,573 @@
+//\\//\\//\\//\\//\\//\\//\\//\\//\\ Foundation 1
+using System;
+using System.Collections.Generic;
+
+class Comment
+{
+    public string CommenterName { get; set; }
+    public string CommentText { get; set; }
+
+    public Comment(string commenterName, string commentText)
+    {
+        CommenterName = commenterName;
+        CommentText = commentText;
+    }
+}
+
+class Video
+{
+    public string Title { get; set; }
+    public string Author { get; set; }
+    public int LengthInSeconds { get; set; }
+    private List<Comment> Comments = new List<Comment>();
+
+    public Video(string title, string author, int lengthInSeconds)
+    {
+        Title = title;
+        Author = author;
+        LengthInSeconds = lengthInSeconds;
+    }
+
+    public void AddComment(string commenterName, string commentText)
+    {
+        Comments.Add(new Comment(commenterName, commentText));
+    }
+
+    public int GetNumberOfComments()
+    {
+        return Comments.Count;
+    }
+
+    public void DisplayVideoDetails()
+    {
+        Console.WriteLine($"Title: {Title}");
+        Console.WriteLine($"Author: {Author}");
+        Console.WriteLine($"Length (seconds): {LengthInSeconds}");
+        Console.WriteLine($"Number of Comments: {GetNumberOfComments()}");
+
+        Console.WriteLine("Comments:");
+        foreach (var comment in Comments)
+        {
+            Console.WriteLine($"Commenter: {comment.CommenterName}");
+            Console.WriteLine($"Comment Text: {comment.CommentText}");
+        }
+
+        Console.WriteLine();
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        List<Video> videos = new List<Video>();
+
+        // Create and set values for 3-4 videos
+        Video video1 = new Video("Video 1", "Author 1", 300);
+        Video video2 = new Video("Video 2", "Author 2", 240);
+        Video video3 = new Video("Video 3", "Author 3", 420);
+
+        // Add comments to each video
+        video1.AddComment("User A", "Great video!");
+        video1.AddComment("User B", "Nice work.");
+        video2.AddComment("User C", "Interesting content.");
+        video2.AddComment("User D", "I learned a lot.");
+        video3.AddComment("User E", "Could be better.");
+        video3.AddComment("User F", "Not my favorite.");
+
+        // Add videos to the list
+        videos.Add(video1);
+        videos.Add(video2);
+        videos.Add(video3);
+
+        // Display video details
+        foreach (var video in videos)
+        {
+            video.DisplayVideoDetails();
+        }
+    }
+}
+
+//\\//\\//\\//\\//\\//\\//\\//\\//\\ Foundation 2
+using System;
+using System.Collections.Generic;
+
+class Address
+{
+    private string StreetAddress { get; set; }
+    private string City { get; set; }
+    private string StateProvince { get; set; }
+    private string Country { get; set; }
+
+    public Address(string streetAddress, string city, string stateProvince, string country)
+    {
+        StreetAddress = streetAddress;
+        City = city;
+        StateProvince = stateProvince;
+        Country = country;
+    }
+
+    public bool IsInUSA()
+    {
+        return Country == "USA";
+    }
+
+    public string GetAddressString()
+    {
+        return $"{StreetAddress}\n{City}, {StateProvince}\n{Country}";
+    }
+}
+
+class Customer
+{
+    private string Name { get; set; }
+    private Address Address { get; set; }
+
+    public Customer(string name, Address address)
+    {
+        Name = name;
+        Address = address;
+    }
+
+    public bool IsInUSA()
+    {
+        return Address.IsInUSA();
+    }
+
+    public string GetCustomerInfo()
+    {
+        return $"Customer Name: {Name}\nAddress:\n{Address.GetAddressString()}";
+    }
+}
+
+class Product
+{
+    private string Name { get; set; }
+    private int ProductId { get; set; }
+    private decimal Price { get; set; }
+    private int Quantity { get; set; }
+
+    public Product(string name, int productId, decimal price, int quantity)
+    {
+        Name = name;
+        ProductId = productId;
+        Price = price;
+        Quantity = quantity;
+    }
+
+    public decimal CalculateProductTotalPrice()
+    {
+        return Price * Quantity;
+    }
+}
+
+class Order
+{
+    private List<Product> Products { get; set; }
+    private Customer Customer { get; set; }
+
+    public Order(Customer customer)
+    {
+        Products = new List<Product>();
+        Customer = customer;
+    }
+
+    public void AddProduct(Product product)
+    {
+        Products.Add(product);
+    }
+
+    public decimal CalculateTotalPrice()
+    {
+        decimal totalPrice = 0;
+        foreach (var product in Products)
+        {
+            totalPrice += product.CalculateProductTotalPrice();
+        }
+
+        if (Customer.IsInUSA())
+        {
+            totalPrice += 5; // Shipping cost for USA
+        }
+        else
+        {
+            totalPrice += 35; // Shipping cost for non-USA
+        }
+
+        return totalPrice;
+    }
+
+    public string GetPackingLabel()
+    {
+        string packingLabel = "Packing Label:\n";
+        foreach (var product in Products)
+        {
+            packingLabel += $"{product.Name} (Product ID: {product.ProductId})\n";
+        }
+        return packingLabel;
+    }
+
+    public string GetShippingLabel()
+    {
+        string shippingLabel = "Shipping Label:\n";
+        shippingLabel += Customer.GetCustomerInfo();
+        return shippingLabel;
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Create an address
+        Address customerAddress = new Address("123 Main St", "Anytown", "CA", "USA");
+
+        // Create a customer
+        Customer customer = new Customer("John Doe", customerAddress);
+
+        // Create products
+        Product product1 = new Product("Widget", 1, 10.99M, 2);
+        Product product2 = new Product("Gadget", 2, 15.50M, 1);
+        
+        // Create an order for the first customer
+        Order order1 = new Order(customer);
+        order1.AddProduct(product1);
+        order1.AddProduct(product2);
+
+        // Create an address for a non-USA customer
+        Address nonUsaAddress = new Address("456 Elm St", "Othercity", "Ontario", "Canada");
+
+        // Create a non-USA customer
+        Customer nonUsaCustomer = new Customer("Jane Smith", nonUsaAddress);
+
+        // Create more products
+        Product product3 = new Product("Thingamajig", 3, 8.99M, 3);
+
+        // Create an order for the non-USA customer
+        Order order2 = new Order(nonUsaCustomer);
+        order2.AddProduct(product3);
+
+        // Calculate and display order details
+        Console.WriteLine("Order 1:");
+        Console.WriteLine(order1.GetPackingLabel());
+        Console.WriteLine(order1.GetShippingLabel());
+        Console.WriteLine($"Total Price: ${order1.CalculateTotalPrice():F2}\n");
+
+        Console.WriteLine("Order 2:");
+        Console.WriteLine(order2.GetPackingLabel());
+        Console.WriteLine(order2.GetShippingLabel());
+        Console.WriteLine($"Total Price: ${order2.CalculateTotalPrice():F2}");
+    }
+}
+
+//\\//\\//\\//\\//\\//\\//\\//\\//\\ Foundation 3
+using System;
+
+class Address
+{
+    private string Street { get; set; }
+    private string City { get; set; }
+    private string State { get; set; }
+    private string Country { get; set; }
+
+    public Address(string street, string city, string state, string country)
+    {
+        Street = street;
+        City = city;
+        State = state;
+        Country = country;
+    }
+
+    public string GetFullAddress()
+    {
+        return $"{Street}, {City}, {State}, {Country}";
+    }
+}
+
+class Event
+{
+    private string EventTitle { get; set; }
+    private string Description { get; set; }
+    private DateTime Date { get; set; }
+    private string Time { get; set; }
+    private Address EventAddress { get; set; }
+
+    public Event(string eventTitle, string description, DateTime date, string time, Address address)
+    {
+        EventTitle = eventTitle;
+        Description = description;
+        Date = date;
+        Time = time;
+        EventAddress = address;
+    }
+
+    public string GenerateStandardMessage()
+    {
+        return $"Event Title: {EventTitle}\nDescription: {Description}\nDate: {Date.ToShortDateString()}\nTime: {Time}\nAddress: {EventAddress.GetFullAddress()}";
+    }
+
+    public string GenerateFullMessage()
+    {
+        return GenerateStandardMessage();
+    }
+
+    public string GenerateShortDescription()
+    {
+        return $"{GetType().Name}: {EventTitle} ({Date.ToShortDateString()})";
+    }
+}
+
+class Lecture : Event
+{
+    private string Speaker { get; set; }
+    private int Capacity { get; set; }
+
+    public Lecture(string eventTitle, string description, DateTime date, string time, Address address, string speaker, int capacity)
+        : base(eventTitle, description, date, time, address)
+    {
+        Speaker = speaker;
+        Capacity = capacity;
+    }
+
+    public new string GenerateFullMessage()
+    {
+        return base.GenerateFullMessage() + $"\nSpeaker: {Speaker}\nCapacity: {Capacity}";
+    }
+}
+
+class Reception : Event
+{
+    private string RsvpEmail { get; set; }
+
+    public Reception(string eventTitle, string description, DateTime date, string time, Address address, string rsvpEmail)
+        : base(eventTitle, description, date, time, address)
+    {
+        RsvpEmail = rsvpEmail;
+    }
+
+    public new string GenerateFullMessage()
+    {
+        return base.GenerateFullMessage() + $"\nRSVP Email: {RsvpEmail}";
+    }
+}
+
+class OutdoorGathering : Event
+{
+    private string WeatherForecast { get; set; }
+
+    public OutdoorGathering(string eventTitle, string description, DateTime date, string time, Address address, string weatherForecast)
+        : base(eventTitle, description, date, time, address)
+    {
+        WeatherForecast = weatherForecast;
+    }
+
+    public new string GenerateFullMessage()
+    {
+        return base.GenerateFullMessage() + $"\nWeather Forecast: {WeatherForecast}";
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Create addresses
+        Address address1 = new Address("123 Park St", "City1", "State1", "Country1");
+        Address address2 = new Address("456 Plaza Ave", "City2", "State2", "Country2");
+        Address address3 = new Address("789 Garden Rd", "City3", "State3", "Country3");
+
+        // Create events
+        Event event1 = new Event("Event 1", "Description 1", DateTime.Now, "10:00 AM", address1);
+        Lecture lecture1 = new Lecture("Lecture 1", "Lecture Description", DateTime.Now, "2:00 PM", address2, "Speaker 1", 100);
+        Reception reception1 = new Reception("Reception 1", "Reception Description", DateTime.Now, "6:00 PM", address3, "rsvp@example.com");
+        OutdoorGathering gathering1 = new OutdoorGathering("Gathering 1", "Gathering Description", DateTime.Now, "4:00 PM", address1, "Sunny");
+
+        // Generate and display messages
+        Console.WriteLine("Standard Messages:");
+        Console.WriteLine(event1.GenerateStandardMessage());
+        Console.WriteLine(lecture1.GenerateStandardMessage());
+        Console.WriteLine(reception1.GenerateStandardMessage());
+        Console.WriteLine(gathering1.GenerateStandardMessage());
+
+        Console.WriteLine("\nFull Messages:");
+        Console.WriteLine(event1.GenerateFullMessage());
+        Console.WriteLine(lecture1.GenerateFullMessage());
+        Console.WriteLine(reception1.GenerateFullMessage());
+        Console.WriteLine(gathering1.GenerateFullMessage());
+
+        Console.WriteLine("\nShort Descriptions:");
+        Console.WriteLine(event1.GenerateShortDescription());
+        Console.WriteLine(lecture1.GenerateShortDescription());
+        Console.WriteLine(reception1.GenerateShortDescription());
+        Console.WriteLine(gathering1.GenerateShortDescription());
+    }
+}
+
+//\\//\\//\\//\\//\\//\\//\\//\\//\\ Foundation 4
+using System;
+using System.Collections.Generic;
+
+class Activity
+{
+    private DateTime Date { get; set; }
+    private int Minutes { get; set; }
+
+    public Activity(DateTime date, int minutes)
+    {
+        Date = date;
+        Minutes = minutes;
+    }
+
+    public virtual double GetDistance()
+    {
+        return 0; // Base class does not have distance information
+    }
+
+    public virtual double GetSpeed()
+    {
+        return 0; // Base class does not have speed information
+    }
+
+    public virtual double GetPace()
+    {
+        return 0; // Base class does not have pace information
+    }
+
+    public virtual string GetSummary()
+    {
+        return $"{Date:dd MMM yyyy}: {GetActivityType()} ({Minutes} min)";
+    }
+
+    public virtual string GetActivityType()
+    {
+        return "Activity";
+    }
+}
+
+class Running : Activity
+{
+    private double Distance { get; set; }
+
+    public Running(DateTime date, int minutes, double distance) : base(date, minutes)
+    {
+        Distance = distance;
+    }
+
+    public override double GetDistance()
+    {
+        return Distance;
+    }
+
+    public override double GetSpeed()
+    {
+        return Distance / (Minutes / 60.0);
+    }
+
+    public override double GetPace()
+    {
+        return Minutes / Distance;
+    }
+
+    public override string GetSummary()
+    {
+        return $"{base.GetSummary()}: Distance {Distance:F1} miles, Speed {GetSpeed():F1} mph, Pace: {GetPace():F1} min per mile";
+    }
+
+    public override string GetActivityType()
+    {
+        return "Running";
+    }
+}
+
+class StationaryBicycle : Activity
+{
+    private double Speed { get; set; }
+
+    public StationaryBicycle(DateTime date, int minutes, double speed) : base(date, minutes)
+    {
+        Speed = speed;
+    }
+
+    public override double GetSpeed()
+    {
+        return Speed;
+    }
+
+    public override double GetDistance()
+    {
+        return (Speed * Minutes) / 60.0;
+    }
+
+    public override double GetPace()
+    {
+        return 60.0 / Speed;
+    }
+
+    public override string GetSummary()
+    {
+        return $"{base.GetSummary()}: Speed {Speed:F1} kph, Distance {GetDistance():F1} km, Pace: {GetPace():F1} min per km";
+    }
+
+    public override string GetActivityType()
+    {
+        return "Stationary Bicycle";
+    }
+}
+
+class Swimming : Activity
+{
+    private int Laps { get; set; }
+
+    public Swimming(DateTime date, int minutes, int laps) : base(date, minutes)
+    {
+        Laps = laps;
+    }
+
+    public override double GetDistance()
+    {
+        return (Laps * 50) / 1000.0; // Convert 50m laps to kilometers
+    }
+
+    public override double GetSpeed()
+    {
+        return GetDistance() / (Minutes / 60.0);
+    }
+
+    public override double GetPace()
+    {
+        return Minutes / GetDistance();
+    }
+
+    public override string GetSummary()
+    {
+        return $"{base.GetSummary()}: Distance {GetDistance():F1} km, Speed {GetSpeed():F1} kph, Pace: {GetPace():F1} min per km";
+    }
+
+    public override string GetActivityType()
+    {
+        return "Swimming";
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        List<Activity> activities = new List<Activity>();
+
+        // Create activities of each type
+        Activity runningActivity = new Running(DateTime.Now, 30, 3.0);
+        Activity bicycleActivity = new StationaryBicycle(DateTime.Now, 45, 20.0);
+        Activity swimmingActivity = new Swimming(DateTime.Now, 60, 40);
+
+        activities.Add(runningActivity);
+        activities.Add(bicycleActivity);
+        activities.Add(swimmingActivity);
+
+        // Display summary for each activity
+        foreach (var activity in activities)
+        {
+            Console.WriteLine(activity.GetSummary());
+        }
+    }
+}
